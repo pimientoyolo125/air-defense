@@ -1,7 +1,7 @@
 import pygame
 import configuracion
 
-class Defensa:
+class Entidad:
     def __init__(self, dir_imagen, x, y):
 
         self.imagen = pygame.image.load(dir_imagen)
@@ -11,7 +11,10 @@ class Defensa:
         self.y = y
 
     def dibujar(self, pantalla):
-        pantalla.blit(self.imagen, (self.x, self.y))
+        pos_x = self.x - configuracion.ANCHO_OBJETO // 2
+        pos_y = self.y - configuracion.ALTO_OBJETO // 2
+
+        pantalla.blit(self.imagen, (pos_x, pos_y))
 
     def mover(self, x, y):
         self.x = x
