@@ -75,6 +75,10 @@ def conectar_puntos():
 
 conectar_puntos()
 
+def dibujar_ruta(ruta):
+    for i in range(1, len(ruta)):
+        pygame.draw.line(pantalla, configuracion.COLOR_RUTA, (ruta[i-1].x, ruta[i-1].y), (ruta[i].x, ruta[i].y), 2)
+
 ################################### DEFENSAS ###################################
 numero_defensas_s400 = 20
 
@@ -90,6 +94,12 @@ for i in range(numero_defensas_s400):
 
 calcular_pesos(defensas)
 
+################################## OBJECTIVO ##################################
+punto_final = buscar_punto_mas_cercano(configuracion.OBJETIVO[0], configuracion.OBJETIVO[1])
+
+objetivo = Objetivo(punto_final)
+
+
 ################################### INTRUSO ###################################
 intruso = None
 
@@ -99,18 +109,16 @@ y = random.randint(configuracion.ALTO_OBJETO//2, configuracion.ALTO - configurac
 
 punto_inicial = buscar_punto_mas_cercano(x, y)
 
-intruso = A10(punto_inicial)
+intruso = A10(punto_inicial, punto_final)
+
+# Calcular ruta
+ruta = intruso.dijkstra(puntos)
 
 
 ################################### ENTIDADES ##################################
 entidades = []
 entidades.extend(defensas)
 entidades.append(intruso)
-
-################################### OBJECTIVO ##################################
-punto_final = buscar_punto_mas_cercano(configuracion.OBJETIVO[0], configuracion.OBJETIVO[1])
-
-objetivo = Objetivo(punto_final)
 
 
 
@@ -132,6 +140,9 @@ while ejecutando:
 
     # Dibujando
     pantalla.blit(fondo, (0, 0))
+
+    # Dibujar ruta
+    dibujar_ruta(ruta)
 
     # Dibujar todos los puntos
     for punto in puntos:

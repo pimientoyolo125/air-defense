@@ -22,4 +22,5 @@ DIR_OBJETIVO = "imagenes/objetivo.png"
 # Colores
 ROJO = (255, 0, 0, 128) 
 PUNTO = (255, 255, 255)
+COLOR_RUTA = (0, 0, 255)
 
