@@ -4,6 +4,7 @@ import sys
 import random
 from entidades.defensas.s400 import S400
 from entidades.intrusos.a10 import A10
+from entidades.objetivo import Objetivo
 from punto import Punto
 
 pygame.init()
@@ -56,6 +57,9 @@ for x in range(0, configuracion.ANCHO, configuracion.SEPARACION_PUNTOS):
     for y in range(0, configuracion.ALTO, configuracion.SEPARACION_PUNTOS):
         puntos.append(Punto(x, y))
 
+################################### OBJECTIVO ##################################
+objetivo = Objetivo()
+
 ################################### FUNCIONES ##################################
 #Calculo de pesos de cada punto
 def calcular_pesos():
@@ -95,6 +99,9 @@ while ejecutando:
     # Dibujar todas las entidades
     for entidad in entidades:
         entidad.dibujar(pantalla)
+
+    # Dibujar objetivo
+    objetivo.dibujar(pantalla)
 
     # Refresco de pantalla
     pygame.display.flip()
