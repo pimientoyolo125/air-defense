@@ -6,6 +6,7 @@ class Punto():
         self.y = y
         self.peso = 0
         self.radio = 2
+        self.vecinos = []
 
     def set_peso(self, peso):
         self.peso = peso
@@ -22,4 +23,7 @@ class Punto():
 
     def dibujar(self, pantalla):
         pygame.draw.circle(pantalla, self.calcular_color(), (self.x, self.y), self.radio)
+
+    def agregar_vecino(self, vecino):
+        self.vecinos.append(vecino)
         

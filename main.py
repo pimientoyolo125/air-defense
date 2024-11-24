@@ -53,8 +53,8 @@ entidades.append(intruso)
 puntos = []
 
 # Crear cuadricula de puntos
-for x in range(0, configuracion.ANCHO, configuracion.SEPARACION_PUNTOS):
-    for y in range(0, configuracion.ALTO, configuracion.SEPARACION_PUNTOS):
+for x in range(configuracion.SEPARACION_PUNTOS, configuracion.ANCHO, configuracion.SEPARACION_PUNTOS):
+    for y in range(configuracion.SEPARACION_PUNTOS, configuracion.ALTO, configuracion.SEPARACION_PUNTOS):
         puntos.append(Punto(x, y))
 
 ################################### OBJECTIVO ##################################
@@ -74,6 +74,24 @@ def calcular_pesos():
 
 calcular_pesos()
 
+#Conectar puntos
+def conectar_puntos():
+    for punto in puntos:
+
+        longitud = len(puntos)
+        indice = puntos.index(punto)
+        limite_inferior = max(0, indice - configuracion.ALTO//configuracion.SEPARACION_PUNTOS-1)
+        limite_superior = min(longitud, indice + configuracion.ANCHO//configuracion.SEPARACION_PUNTOS+1)
+
+        for vecino in puntos[limite_inferior:limite_superior]:
+            
+            if vecino != punto:
+                distancia = ((punto.x - vecino.x)**2 + (punto.y - vecino.y)**2)**0.5
+
+                if distancia < configuracion.SEPARACION_PUNTOS * 1.5:
+                    punto.agregar_vecino(vecino)
+
+conectar_puntos()
 
 ################################### BUCLE PRINCIPAL ############################
 
