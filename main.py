@@ -1,6 +1,5 @@
 import pygame
 import configuracion
-import sys
 import random
 from entidades.defensas.s400 import S400
 from entidades.intrusos.a10 import A10
@@ -8,6 +7,19 @@ from entidades.objetivo import Objetivo
 from punto import Punto
 
 pygame.init()
+
+
+################################### VARIABLES DE CONTROL ##################################
+
+i_ruta = 0
+intruso_derribado = False
+intruso_llego = False
+cantidad_disparons = 0
+cantidad_impactos = 0
+dano_total = 0
+
+
+###############################################################################3
 
 # Configuración de la pantalla
 pantalla = pygame.display.set_mode((configuracion.ANCHO, configuracion.ALTO))
@@ -52,7 +64,8 @@ def calcular_pesos(defensas):
             distancia = ((punto.x - defensa.x)**2 + (punto.y - defensa.y)**2)**0.5
             if distancia < defensa.alcance:
                 peso = defensa.peso_maximo - distancia * (defensa.peso_maximo - defensa.peso_minimo)/defensa.alcance
-                punto.set_peso(punto.peso + peso)
+                peso_real = 1 - (1-punto.peso)*(1-peso)
+                punto.set_peso(peso_real)
 
 
 
@@ -79,13 +92,41 @@ def dibujar_ruta(ruta):
     for i in range(1, len(ruta)):
         pygame.draw.line(pantalla, configuracion.COLOR_RUTA, (ruta[i-1].x, ruta[i-1].y), (ruta[i].x, ruta[i].y), 2)
 
+def intruso_dano(intruso, defensa, distancia):
+    global dano_total
+    dano = defensa.dano_maximo - distancia * (defensa.dano_maximo - defensa.dano_minimo)/defensa.alcance
+    dano_total += dano
+    print("Daño: ", dano)
+    intruso.hacer_dano(dano)
+
 def impacto(intruso, defensas):
+    global cantidad_disparons
+    global cantidad_impactos
+    global intruso_derribado
     for defensa in defensas:
         distancia = ((intruso.x - defensa.x)**2 + (intruso.y - defensa.y)**2)**0.5
-        if distancia < defensa.alcance:
-            peso = intruso.punto_inicial.peso/100
+        if distancia <= defensa.alcance:
+            peso = intruso.punto_inicial.peso
+            cantidad_disparons += 1
             print("Probabilidad de impacto: ", peso)
-    return False
+            if random.random() < peso:
+                cantidad_impactos += 1
+                print("Intruso impactado")
+                intruso_dano(intruso, defensa, distancia)
+                if intruso.derribado:
+                    intruso_derribado = True
+                break
+
+def print_resultados():
+    print("\n\n-----------------------------------------------------------------")
+    print("Resultados:")
+    print("Cantidad de disparos: ", cantidad_disparons)
+    print("Cantidad de impactos: ", cantidad_impactos)
+    print("Daño total: ", dano_total)
+    print("Intruso derribado: ", intruso_derribado)
+    print("Intruso llego al objetivo: ", intruso_llego)
+    print("Cantidad de saltos: ", i_ruta)
+    print("-----------------------------------------------------------------")
 
 ################################### DEFENSAS ###################################
 numero_defensas_s400 = 20
@@ -132,11 +173,8 @@ entidades.append(intruso)
 
 ################################### BUCLE PRINCIPAL ############################
 
-#Variables de control
-i_ruta = 0
-intruso_derribado = False
-intruso_llego = False
 
+show_results = False
 
 # Bucle principal
 ejecutando = True
@@ -167,15 +205,29 @@ while ejecutando:
     objetivo.dibujar(pantalla)
 
     if(i_ruta < len(ruta)):
+        # Impacto
+        impacto(intruso, defensas)
+
+        # Mover intruso
         intruso.set_punto_inicial(ruta[i_ruta])
         i_ruta += 1
         if i_ruta == len(ruta):
             intruso_llego = True
             intruso.intruso_inmune()
             print("Intruso llego al objetivo")
+            print_resultados()
+            show_results = True
 
-    # Impacto
-    impacto(intruso, defensas)
+
+
+    if intruso_derribado:
+        print("Intruso derribado")
+        if(not print_resultados):
+            print_resultados()
+            show_results = True
+
+    
+
 
     # Refresco de pantalla
     pygame.display.flip()

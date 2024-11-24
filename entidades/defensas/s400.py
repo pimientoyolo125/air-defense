@@ -9,8 +9,8 @@ class S400(Defensa):
             x, 
             y,
             alcance=100,
-            peso_minimo=10,
-            peso_maximo=70,
+            peso_minimo=0.1,
+            peso_maximo=0.7,
             dano_maximo=50,
             dano_minimo=10
         )

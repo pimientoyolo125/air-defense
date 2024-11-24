@@ -16,8 +16,8 @@ class Punto():
             self.peso = 100
 
     def calcular_color(self):
-        verde = int(255 - self.peso * 2.55)
-        rojo = int(self.peso * 2.55)
+        verde = int(255 - self.peso * 255)
+        rojo = int(self.peso * 255)
         azul = 0
         return (rojo, verde, azul,100)
 
