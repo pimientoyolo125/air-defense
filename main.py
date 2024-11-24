@@ -79,6 +79,14 @@ def dibujar_ruta(ruta):
     for i in range(1, len(ruta)):
         pygame.draw.line(pantalla, configuracion.COLOR_RUTA, (ruta[i-1].x, ruta[i-1].y), (ruta[i].x, ruta[i].y), 2)
 
+def impacto(intruso, defensas):
+    for defensa in defensas:
+        distancia = ((intruso.x - defensa.x)**2 + (intruso.y - defensa.y)**2)**0.5
+        if distancia < defensa.alcance:
+            peso = intruso.punto_inicial.peso/100
+            print("Probabilidad de impacto: ", peso)
+    return False
+
 ################################### DEFENSAS ###################################
 numero_defensas_s400 = 20
 
@@ -124,7 +132,10 @@ entidades.append(intruso)
 
 ################################### BUCLE PRINCIPAL ############################
 
+#Variables de control
 i_ruta = 0
+intruso_derribado = False
+intruso_llego = False
 
 
 # Bucle principal
@@ -156,10 +167,15 @@ while ejecutando:
     objetivo.dibujar(pantalla)
 
     if(i_ruta < len(ruta)):
-        intruso.mover(ruta[i_ruta].x, ruta[i_ruta].y)
+        intruso.set_punto_inicial(ruta[i_ruta])
         i_ruta += 1
         if i_ruta == len(ruta):
+            intruso_llego = True
+            intruso.intruso_inmune()
             print("Intruso llego al objetivo")
+
+    # Impacto
+    impacto(intruso, defensas)
 
     # Refresco de pantalla
     pygame.display.flip()

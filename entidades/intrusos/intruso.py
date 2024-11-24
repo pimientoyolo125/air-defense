@@ -2,17 +2,33 @@ from ..entidad import Entidad
 import configuracion
 
 class Intruso(Entidad):
-    def __init__(self, dir_imagen, velocidad, punto_inicial, punto_final):
+    def __init__(self, dir_imagen, velocidad, punto_inicial, punto_final, salud):
         
         super().__init__(dir_imagen, punto_inicial.x, punto_inicial.y)
         self.velocidad = velocidad
         self.punto_inicial = punto_inicial
         self.punto_final = punto_final
+        self.salud = salud
+        self.inmune = False
+        self.derribado = False
 
     def set_punto_inicial(self, punto_inicial):
+        if self.derribado:
+            return
         self.punto_inicial = punto_inicial
         self.x = punto_inicial.x
         self.y = punto_inicial.y
+
+    def hacer_dano(self, dano):
+        self.salud -= dano
+        if self.salud <= 0:
+            self.derribado = True
+    
+    def intruso_derribado(self):
+        self.derribado = True
+
+    def intruso_inmune(self):
+        self.inmune = True
 
     def dijkstra(self, puntos):
         

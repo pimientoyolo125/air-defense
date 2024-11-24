@@ -7,5 +7,6 @@ class A10(Intruso):
             configuracion.DIR_A10, 
             velocidad=1,
             punto_inicial=punto_inicial,
-            punto_final=punto_final
+            punto_final=punto_final,
+            salud=100
             )
