@@ -20,35 +20,6 @@ fondo = pygame.transform.scale(fondo, (configuracion.ANCHO, configuracion.ALTO))
 #Reloj
 reloj = pygame.time.Clock()
 
-################################### DEFENSAS ###################################
-numero_defensas_s400 = 20
-
-# Lista de defensas
-defensas = []
-
-# Crear ubicaciones aleatorias para las defensas
-for i in range(numero_defensas_s400):
-    x = random.randint(configuracion.ZONA_SEGURA, configuracion.ANCHO - configuracion.ANCHO_OBJETO)
-    y = random.randint(configuracion.ALTO_OBJETO//2, configuracion.ALTO - configuracion.ALTO_OBJETO)
-
-    defensas.append(S400(x, y))
-
-################################### INTRUSO ###################################
-intruso = None
-
-# Crear ubicación aleatoria para el
-x = random.randint(configuracion.ANCHO_OBJETO//2, configuracion.ZONA_SEGURA)
-y = random.randint(configuracion.ALTO_OBJETO//2, configuracion.ALTO - configuracion.ALTO_OBJETO)
-
-intruso = A10(x, y)
-
-
-################################### ENTIDADES ##################################
-entidades = []
-entidades.extend(defensas)
-entidades.append(intruso)
-
-
 ################################### PUNTO ######################################
 puntos = []
 
@@ -57,12 +28,23 @@ for x in range(configuracion.SEPARACION_PUNTOS, configuracion.ANCHO, configuraci
     for y in range(configuracion.SEPARACION_PUNTOS, configuracion.ALTO, configuracion.SEPARACION_PUNTOS):
         puntos.append(Punto(x, y))
 
-################################### OBJECTIVO ##################################
-objetivo = Objetivo()
-
 ################################### FUNCIONES ##################################
+def buscar_punto_mas_cercano(x, y):
+    punto_mas_cercano = None
+    distancia_minima = 1000000
+
+    for punto in puntos:
+        distancia = ((x - punto.x)**2 + (y - punto.y)**2)**0.5
+
+        if distancia < distancia_minima:
+            punto_mas_cercano = punto
+            distancia_minima = distancia
+
+    return punto_mas_cercano
+    
+
 #Calculo de pesos de cada punto
-def calcular_pesos():
+def calcular_pesos(defensas):
     for punto in puntos:
         punto.set_peso(0)
 
@@ -72,7 +54,7 @@ def calcular_pesos():
                 peso = defensa.peso_maximo - distancia * (defensa.peso_maximo - defensa.peso_minimo)/defensa.alcance
                 punto.set_peso(punto.peso + peso)
 
-calcular_pesos()
+
 
 #Conectar puntos
 def conectar_puntos():
@@ -93,7 +75,48 @@ def conectar_puntos():
 
 conectar_puntos()
 
+################################### DEFENSAS ###################################
+numero_defensas_s400 = 20
+
+# Lista de defensas
+defensas = []
+
+# Crear ubicaciones aleatorias para las defensas
+for i in range(numero_defensas_s400):
+    x = random.randint(configuracion.ZONA_SEGURA, configuracion.ANCHO - configuracion.ANCHO_OBJETO)
+    y = random.randint(configuracion.ALTO_OBJETO//2, configuracion.ALTO - configuracion.ALTO_OBJETO)
+
+    defensas.append(S400(x, y))
+
+calcular_pesos(defensas)
+
+################################### INTRUSO ###################################
+intruso = None
+
+# Crear ubicación aleatoria para el
+x = random.randint(configuracion.ANCHO_OBJETO//2, configuracion.ZONA_SEGURA)
+y = random.randint(configuracion.ALTO_OBJETO//2, configuracion.ALTO - configuracion.ALTO_OBJETO)
+
+punto_inicial = buscar_punto_mas_cercano(x, y)
+
+intruso = A10(punto_inicial)
+
+
+################################### ENTIDADES ##################################
+entidades = []
+entidades.extend(defensas)
+entidades.append(intruso)
+
+################################### OBJECTIVO ##################################
+punto_final = buscar_punto_mas_cercano(configuracion.OBJETIVO[0], configuracion.OBJETIVO[1])
+
+objetivo = Objetivo(punto_final)
+
+
+
 ################################### BUCLE PRINCIPAL ############################
+
+
 
 
 # Bucle principal
