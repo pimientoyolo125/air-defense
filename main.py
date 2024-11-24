@@ -124,7 +124,7 @@ entidades.append(intruso)
 
 ################################### BUCLE PRINCIPAL ############################
 
-
+i_ruta = 0
 
 
 # Bucle principal
@@ -154,6 +154,12 @@ while ejecutando:
 
     # Dibujar objetivo
     objetivo.dibujar(pantalla)
+
+    if(i_ruta < len(ruta)):
+        intruso.mover(ruta[i_ruta].x, ruta[i_ruta].y)
+        i_ruta += 1
+        if i_ruta == len(ruta):
+            print("Intruso llego al objetivo")
 
     # Refresco de pantalla
     pygame.display.flip()
