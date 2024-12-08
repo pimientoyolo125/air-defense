@@ -16,15 +16,15 @@ columnas = ["avion", "daño recibido", "cantidad de impactos", "cantidad disparo
 
 df = pd.DataFrame(columns=columnas)
 
-df.to_csv("simulacion.csv", index=False, sep=';', quoting=1)
+df.to_csv("simulacion.csv", index=False)
 
-numero_simulaciones = 10
+numero_simulaciones = 1000
 
 def agregar_fila(nueva_fila):
     global df
     nueva_fila = pd.DataFrame([nueva_fila])
     df = pd.concat([df, nueva_fila], ignore_index=True)
-    df.to_csv("simulacion.csv", index=False,  sep=';', quoting=1)
+    df.to_csv("simulacion.csv", index=False)
     
 
 pygame.init()
