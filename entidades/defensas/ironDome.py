@@ -11,6 +11,6 @@ class IronDome(Defensa):
             alcance=70,
             peso_minimo=0.1,
             peso_maximo=0.9,
-            dano_maximo=490,
-            dano_minimo=49
+            dano_maximo=240,
+            dano_minimo=24
         )

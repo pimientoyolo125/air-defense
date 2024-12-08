@@ -11,6 +11,6 @@ class S400(Defensa):
             alcance=120,
             peso_minimo=0.1,
             peso_maximo=0.9,
-            dano_maximo=1800,
-            dano_minimo=180
+            dano_maximo=900,
+            dano_minimo=90
         )

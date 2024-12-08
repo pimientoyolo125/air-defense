@@ -11,6 +11,6 @@ class S1(Defensa):
             alcance=30,
             peso_minimo=0.1,
             peso_maximo=0.8,
-            dano_maximo=420,
-            dano_minimo=32
+            dano_maximo=160,
+            dano_minimo=16
         )

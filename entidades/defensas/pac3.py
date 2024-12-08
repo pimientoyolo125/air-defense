@@ -11,6 +11,6 @@ class PAC3(Defensa):
             alcance=70,
             peso_minimo=0.1,
             peso_maximo=0.8,
-            dano_maximo=1020,
-            dano_minimo=102
+            dano_maximo=510,
+            dano_minimo=51
         )

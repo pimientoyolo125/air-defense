@@ -12,6 +12,8 @@ from punto import Punto
 
 pygame.init()
 
+select_intruso = "A10"
+
 
 ################################### VARIABLES DE CONTROL ##################################
 
@@ -183,7 +185,10 @@ y = random.randint(configuracion.ALTO_OBJETO//2, configuracion.ALTO - configurac
 
 punto_inicial = buscar_punto_mas_cercano(x, y)
 
-intruso = A10(punto_inicial, punto_final)
+if select_intruso == "A10":
+    intruso = A10(punto_inicial, punto_final)
+elif select_intruso == "F15":
+    intruso = F15(punto_inicial, punto_final)
 
 # Calcular ruta
 ruta = intruso.dijkstra(puntos)
@@ -200,6 +205,7 @@ entidades.append(intruso)
 
 
 show_results = False
+distancia_siguiente = 1
 
 # Bucle principal
 ejecutando = True
@@ -233,15 +239,20 @@ while ejecutando:
         # Impacto
         impacto(intruso, defensas)
 
-        # Mover intruso
-        intruso.set_punto_inicial(ruta[i_ruta])
-        i_ruta += 1
-        if i_ruta == len(ruta):
-            intruso_llego = True
-            intruso.intruso_inmune()
-            print("Intruso llego al objetivo")
-            print_resultados()
-            show_results = True
+        # Calcular si salta de punto
+        if distancia_siguiente <= 0:
+            # Mover intruso
+            distancia_siguiente = 1
+            intruso.set_punto_inicial(ruta[i_ruta])
+            i_ruta += 1
+            if i_ruta == len(ruta):
+                intruso_llego = True
+                intruso.intruso_inmune()
+                print("Intruso llego al objetivo")
+                print_resultados()
+                show_results = True
+        else:
+            distancia_siguiente -= intruso.velocidad/3000
 
 
 
