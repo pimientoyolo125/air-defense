@@ -7,7 +7,7 @@ class Defensa(Entidad):
 
         super().__init__(dir_imagen, x, y)
         self.alcance = alcance
-        self.peso_minimo = peso_minimo
+        self.peso_minimo = 0
         self.peso_maximo = peso_maximo
         self.dano_minimo = dano_minimo
         self.dano_maximo = dano_maximo

@@ -1,16 +1,16 @@
 from .defensa import Defensa
 import configuracion
 
-class S400(Defensa):
+class IronDome(Defensa):
     def __init__(self, x, y):
 
         super().__init__(
-            configuracion.DIR_S400,
+            configuracion.DIR_IRON_DOME,
             x, 
             y,
-            alcance=120,
+            alcance=70,
             peso_minimo=0.1,
             peso_maximo=0.9,
-            dano_maximo=1800,
-            dano_minimo=180
+            dano_maximo=490,
+            dano_minimo=49
         )

@@ -18,6 +18,10 @@ DIR_FONDO = "imagenes/fondo.jpg"
 DIR_S400 = "imagenes/S400.png"
 DIR_A10 = "imagenes/A10.png"
 DIR_OBJETIVO = "imagenes/objetivo.png"
+DIR_F15 = "imagenes/F15.png"
+DIR_PAC3 = "imagenes/PAC3.png"
+DIR_IRON_DOME = "imagenes/IronDome.png"
+DIR_S1 = "imagenes/S1.png"
 
 # Colores
 ROJO = (255, 0, 0, 128) 

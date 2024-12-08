@@ -2,7 +2,11 @@ import pygame
 import configuracion
 import random
 from entidades.defensas.s400 import S400
+from entidades.defensas.s1 import S1
+from entidades.defensas.pac3 import PAC3
+from entidades.defensas.ironDome import IronDome
 from entidades.intrusos.a10 import A10
+from entidades.intrusos.f15 import F15
 from entidades.objetivo import Objetivo
 from punto import Punto
 
@@ -129,7 +133,10 @@ def print_resultados():
     print("-----------------------------------------------------------------")
 
 ################################### DEFENSAS ###################################
-numero_defensas_s400 = 20
+numero_defensas_s400 = 5
+numero_defensas_pac3 = 5
+numero_defensas_s1 = 5
+numero_defensas_iron_dome = 5
 
 # Lista de defensas
 defensas = []
@@ -140,6 +147,24 @@ for i in range(numero_defensas_s400):
     y = random.randint(configuracion.ALTO_OBJETO//2, configuracion.ALTO - configuracion.ALTO_OBJETO)
 
     defensas.append(S400(x, y))
+
+for i in range(numero_defensas_pac3):
+    x = random.randint(configuracion.ZONA_SEGURA, configuracion.ANCHO - configuracion.ANCHO_OBJETO)
+    y = random.randint(configuracion.ALTO_OBJETO//2, configuracion.ALTO - configuracion.ALTO_OBJETO)
+
+    defensas.append(PAC3(x, y))
+
+for i in range(numero_defensas_s1):
+    x = random.randint(configuracion.ZONA_SEGURA, configuracion.ANCHO - configuracion.ANCHO_OBJETO)
+    y = random.randint(configuracion.ALTO_OBJETO//2, configuracion.ALTO - configuracion.ALTO_OBJETO)
+
+    defensas.append(S1(x, y))
+
+for i in range(numero_defensas_iron_dome):
+    x = random.randint(configuracion.ZONA_SEGURA, configuracion.ANCHO - configuracion.ANCHO_OBJETO)
+    y = random.randint(configuracion.ALTO_OBJETO//2, configuracion.ALTO - configuracion.ALTO_OBJETO)
+
+    defensas.append(IronDome(x, y))
 
 calcular_pesos(defensas)
 
@@ -221,10 +246,12 @@ while ejecutando:
 
 
     if intruso_derribado:
-        print("Intruso derribado")
         if(not print_resultados):
             print_resultados()
             show_results = True
+            ejecutando = False
+
+    
 
     
 
