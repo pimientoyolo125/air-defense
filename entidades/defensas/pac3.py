@@ -8,7 +8,7 @@ class PAC3(Defensa):
             configuracion.DIR_PAC3,
             x, 
             y,
-            alcance=70,
+            alcance=80,
             peso_minimo=0.1,
             peso_maximo=0.8,
             dano_maximo=510,

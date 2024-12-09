@@ -8,7 +8,7 @@ class IronDome(Defensa):
             configuracion.DIR_IRON_DOME,
             x, 
             y,
-            alcance=70,
+            alcance=100,
             peso_minimo=0.1,
             peso_maximo=0.9,
             dano_maximo=240,

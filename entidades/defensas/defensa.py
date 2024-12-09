@@ -18,6 +18,10 @@ class Defensa(Entidad):
         
         # Dibujar el alcance
         pygame.draw.circle(pantalla, configuracion.ROJO, (self.x, self.y), self.alcance, 1)
+
+    def set_posicion(self, x, y):
+        self.x = x
+        self.y = y
         
     
         

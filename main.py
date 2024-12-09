@@ -16,7 +16,7 @@ columnas = ["avion", "daño recibido", "cantidad de impactos", "cantidad disparo
 
 df = pd.DataFrame(columns=columnas)
 
-df.to_csv("simulacion.csv", index=False)
+df.to_csv("simulacion_grilla.csv", index=False)
 
 numero_simulaciones = 1000
 
@@ -24,12 +24,15 @@ def agregar_fila(nueva_fila):
     global df
     nueva_fila = pd.DataFrame([nueva_fila])
     df = pd.concat([df, nueva_fila], ignore_index=True)
-    df.to_csv("simulacion.csv", index=False)
+    df.to_csv("simulacion_grilla.csv", index=False)
     
 
 pygame.init()
 
-for i in range(numero_simulaciones):
+cantidad_llegadas = 0
+cantidad_derribados = 0
+
+for i_simulacion in range(numero_simulaciones):
 
     list_intrusos = ["A10", "F15"]
 
@@ -44,6 +47,7 @@ for i in range(numero_simulaciones):
     cantidad_disparons = 0
     cantidad_impactos = 0
     dano_total = 0
+    ejecutando = True
 
 
     ###############################################################################3
@@ -68,6 +72,26 @@ for i in range(numero_simulaciones):
             puntos.append(Punto(x, y))
 
     ################################### FUNCIONES ##################################
+    def generar_grilla_defensas(defensas):
+
+        # Barajar defensas
+        random.shuffle(defensas)
+
+        alto_minimo = int(configuracion.ALTO*0.1)
+        ancho_minimo = int(configuracion.ANCHO*0.1)
+
+        separacion_alto = (configuracion.ALTO-2*alto_minimo)//3
+        separacion_ancho = (configuracion.ANCHO-2*ancho_minimo-configuracion.ZONA_SEGURA)//4
+
+        #generar grilla de defensas
+        for i in range(5):
+            for j in range(4):
+                x = ancho_minimo + i*separacion_ancho + configuracion.ZONA_SEGURA
+                y = alto_minimo + j*separacion_alto
+                defensas[i*4+j].set_posicion(x, y)
+
+        return defensas
+
     def buscar_punto_mas_cercano(x, y):
         punto_mas_cercano = None
         distancia_minima = 1000000
@@ -139,9 +163,28 @@ for i in range(numero_simulaciones):
                     intruso_dano(intruso, defensa, distancia)
                     if intruso.derribado:
                         intruso_derribado = True
+                        return False
                     break
+        return True
 
     def print_resultados():
+
+        global intruso_derribado
+        global intruso_llego
+        global i_ruta
+        global cantidad_disparons
+        global cantidad_impactos
+        global dano_total
+        global select_intruso
+        global cantidad_derribados
+        global cantidad_llegadas
+
+        if intruso_llego:
+            intruso_derribado = False
+            cantidad_llegadas += 1
+        else:
+            cantidad_derribados += 1
+
         nueva_fila = {
             "avion": select_intruso,
             "daño recibido": dano_total,
@@ -155,6 +198,10 @@ for i in range(numero_simulaciones):
         agregar_fila(nueva_fila)
 
         print("\n\n-----------------------------------------------------------------")
+        print("Simulacion: ", i_simulacion+1)
+        print("Cantidad de llegadas: ", cantidad_llegadas)
+        print("Cantidad de derribados: ", cantidad_derribados)
+        print()
         print("Resultados:")
         print("Intruso: ", select_intruso)
         print("Cantidad de disparos: ", cantidad_disparons)
@@ -199,6 +246,8 @@ for i in range(numero_simulaciones):
 
         defensas.append(IronDome(x, y))
 
+    defensas = generar_grilla_defensas(defensas)
+
     calcular_pesos(defensas)
 
     ################################## OBJECTIVO ##################################
@@ -239,15 +288,7 @@ for i in range(numero_simulaciones):
     distancia_siguiente = 1
 
     # Bucle principal
-    ejecutando = True
     while ejecutando:
-
-        # Eventos
-        for evento in pygame.event.get():
-
-            # Salir del juego
-            if evento.type == pygame.QUIT:
-                ejecutando = False
 
         # Dibujando
         pantalla.blit(fondo, (0, 0))
@@ -268,10 +309,15 @@ for i in range(numero_simulaciones):
 
         if(i_ruta < len(ruta)):
             # Impacto
-            impacto(intruso, defensas)
+            ejecutando = impacto(intruso, defensas)
+            if not ejecutando:
+                intruso.derribado = True
+                intruso.intruso_inmune()
+                print_resultados()
+                show_results = True
 
             # Calcular si salta de punto
-            if distancia_siguiente <= 0:
+            elif distancia_siguiente <= 0:
                 # Mover intruso
                 distancia_siguiente = 1
                 intruso.set_punto_inicial(ruta[i_ruta])
@@ -301,4 +347,4 @@ for i in range(numero_simulaciones):
 
         # Refresco de pantalla
         pygame.display.flip()
-        reloj.tick(configuracion.FPS)
+        #reloj.tick(configuracion.FPS)
