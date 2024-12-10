@@ -16,18 +16,24 @@ columnas = ["avion", "daño recibido", "cantidad de impactos", "cantidad disparo
 
 df = pd.DataFrame(columns=columnas)
 
-df.to_csv("simulacion_grilla.csv", index=False)
+df.to_csv("simulacion_grilla_moviles.csv", index=False)
 
 numero_simulaciones = 1000
+
+probabilidad_mover_defensas = 0.3
+distancia_mover_defensas = 2  
 
 def agregar_fila(nueva_fila):
     global df
     nueva_fila = pd.DataFrame([nueva_fila])
     df = pd.concat([df, nueva_fila], ignore_index=True)
-    df.to_csv("simulacion_grilla.csv", index=False)
+    df.to_csv("simulacion_grilla_moviles.csv", index=False)
     
 
 pygame.init()
+
+#quitar eventos
+pygame.event.set_blocked(None)
 
 cantidad_llegadas = 0
 cantidad_derribados = 0
@@ -331,6 +337,19 @@ for i_simulacion in range(numero_simulaciones):
                     ejecutando = False
             else:
                 distancia_siguiente -= intruso.velocidad/3000
+            
+            bandera = False
+            for defensa in defensas:
+                if(type(defensa) == S1):
+                    defensa.mover_defensa(intruso, probabilidad_mover_defensas, distancia_mover_defensas)
+                    bandera = True
+
+            if bandera:
+                calcular_pesos(defensas)
+                    
+                    
+                    
+                
 
 
 
