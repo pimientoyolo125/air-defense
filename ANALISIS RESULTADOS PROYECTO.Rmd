@@ -1,0 +1,587 @@
+---
+title: "Análisis de resultados - Proyecto Final"
+output:
+  html_document:
+    df_print: paged
+---
+
+***
+
+## Integrantes:
+- Jorge Daniel Robles Ardila - 2210065
+- Miguel Fernando Pimiento Escobar - 2210054
+
+***
+
+## Descripción:
+Después de obtenidos los resultados y métricas en formato CSV desde la simulación en Python, se hace uso del mismo para recopilar, graficar y analizar los resultados obtenidos del estudio de simulación para poder llegar a conclusiones y resultados respecto al proyecto de simulación.
+
+En el presente Notebook se muestran inicialmente los resultados obtenidos para el primer CSV, crrespondiene al sistema de defensas estáticas.
+
+***
+
+## 1. Sistema de Defensas Estáticas
+
+***
+
+### 1.1 Carga de los datos:
+Mediante el metodo read.csv se cargan los datos del estudio de simulación en la variable "data1"
+
+```{r Carga csv}
+Sys.setlocale("LC_ALL", "es_ES.UTF-8")
+
+# Cargar el archivo CSV
+data1 <- read.csv("simulacion_grilla.csv")
+
+# Verificar las primeras filas del archivo para confirmar la carga
+head(data1)
+
+```
+
+***
+
+### 1.2 Resumen Cantidades Totales:
+Se realiza la suma total para los registros del CSV, y de este modo, poder observar datos de utilizad como cantidad total de derribos, total de siparos, daño recibido, etc.
+
+```{r Resumen}
+
+# Inicializar contador para derribados
+total_derribados <- 0
+
+# Contar cuántos son verdaderos (True)
+for (i in 1:nrow(data1)) {
+  if (data1$derribado[i] == "True") {
+    total_derribados <- total_derribados + 1
+  }
+}
+
+# Calcular el total de disparos
+total_disparos <- sum(data1$cantidad.disparos)
+
+# Calcular el total de daño recibido
+total_dano_recibido <- sum(data1$daño.recibido)
+
+# Calcular la cantidad total de impactos
+total_impactos <- sum(data1$cantidad.de.impactos)
+
+# Calcular el total de iteraciones (registros)
+total_iteraciones <- nrow(data1)
+
+# Crear la tabla
+tabla_resumen <- data.frame(
+  "Total de Iteraciones" = total_iteraciones,
+  "Cantidad Total de Derribados" = total_derribados,
+  "Cantidad Total de Disparos" = total_disparos,
+  "Total de Daño Recibido" = total_dano_recibido,
+  "Total de Impactos" = total_impactos
+)
+
+# Ver la tabla
+print(tabla_resumen)
+
+```
+
+***
+
+### 1.3 Histograma:
+Distribución de datos a través de "barras" que indican la frecuencia con la que ocurren los valores en rangos de clase específicos.
+
+```{r Histograma datos}
+# Instalar y cargar librería ggplot2 (si no está instalada)
+if (!require(ggplot2)) install.packages("ggplot2", dependencies = TRUE)
+library(ggplot2)
+
+# Histograma de la distribución del "daño recibido" con un rango específico
+ggplot(data1, aes(x = daño.recibido)) +
+  geom_histogram(binwidth = 100, fill = "blue", color = "black", alpha = 0.7) +
+  labs(title = "Distribución del Daño Recibido", x = "Daño Recibido", y = "Frecuencia") +
+  xlim(-100, 1500) +  # Ajusta el rango del eje X aquí
+  theme_minimal()
+
+# Histograma de la distribución de los "disparos" con un rango específico
+ggplot(data1, aes(x = cantidad.disparos)) +
+  geom_histogram(binwidth = 10, fill = "green", color = "black", alpha = 0.7) +
+  labs(title = "Distribución de la Cantidad de Disparos", x = "Cantidad de Disparos", y = "Frecuencia") +
+  xlim(-10, 100) +  # Ajusta el rango del eje X aquí
+  theme_minimal()
+
+# Histograma de la distribución de los "impactos" con un rango específico
+ggplot(data1, aes(x = cantidad.de.impactos)) +
+  geom_histogram(binwidth = 2, fill = "red", color = "black", alpha = 0.7) +
+  labs(title = "Distribución de la Cantidad de Impactos", x = "Cantidad de Impactos", y = "Frecuencia") +
+  xlim(-2, 20) +  # Ajusta el rango del eje X aquí
+  theme_minimal()
+
+# Histograma de la distribución de los "saltos" con un rango específico
+ggplot(data1, aes(x = cantidad.de.saltos)) +
+  geom_histogram(binwidth = 10, fill = "purple", color = "black", alpha = 0.7) +
+  labs(title = "Distribución de la Cantidad de Saltos", x = "Cantidad de Saltos", y = "Frecuencia") +
+  xlim(50, 200) +  # Ajusta el rango del eje X aquí
+  theme_minimal()
+
+```
+
+***
+
+### 1.4 Densidades:
+La función de densidad muestra la distribución de la variable en términos de la probabilidad de ocurrencia de los valores, creando una curva suave que representa la densidad de los datos.
+
+```{r Densidad datos}
+
+# Instalar y cargar librería ggplot2 (si no está instalada)
+if (!require(ggplot2)) install.packages("ggplot2", dependencies = TRUE)
+library(ggplot2)
+
+# Graficar la distribución del "daño recibido" con un rango específico
+ggplot(data1, aes(x = daño.recibido)) +
+  geom_density(fill = "blue", alpha = 0.4) +
+  labs(title = "Distribución del Daño Recibido", x = "Daño Recibido", y = "Densidad") +
+  xlim(0, 1500) +  # Ajusta el rango del eje X aquí
+  theme_minimal()
+
+# Graficar la distribución de los "disparos" con un rango específico
+ggplot(data1, aes(x = cantidad.disparos)) +
+  geom_density(fill = "green", alpha = 0.4) +
+  labs(title = "Distribución de la Cantidad de Disparos", x = "Cantidad de Disparos", y = "Densidad") +
+  xlim(0, 100) +  # Ajusta el rango del eje X aquí
+  theme_minimal()
+
+# Graficar la distribución de los "impactos" con un rango específico
+ggplot(data1, aes(x = cantidad.de.impactos)) +
+  geom_density(fill = "red", alpha = 0.4) +
+  labs(title = "Distribución de la Cantidad de Impactos", x = "Cantidad de Impactos", y = "Densidad") +
+  xlim(0, 20) +  # Ajusta el rango del eje X aquí
+  theme_minimal()
+
+# Graficar la distribución de los "saltos" con un rango específico
+ggplot(data1, aes(x = cantidad.de.saltos)) +
+  geom_density(fill = "purple", alpha = 0.4) +
+  labs(title = "Distribución de la Cantidad de Saltos", x = "Cantidad de Saltos", y = "Densidad") +
+  xlim(50, 200) +  # Ajusta el rango del eje X aquí
+  theme_minimal()
+
+```
+
+***
+
+### 1.5 Daños recibidos:
+Boxplot que muestra la distribución del daño recibido por cada modelo de avión (A-10 y F-15). Es útil para visualizar la dispersión, la ubicación central y la forma de la distribución de los datos en conjuntos separados. 
+
+```{r Danio por avion}
+#Daño recibido por avión
+#Este gráfico muestra la distribución del daño recibido para los modelos A-10 y F-15.
+# Boxplot
+boxplot(data1$daño.recibido ~ data1$avion, 
+        main = "Distribución del daño recibido por avión", 
+        xlab = "Modelo de Avión", 
+        ylab = "Daño Recibido", 
+        col = c("lightblue", "pink"),
+        notch = TRUE)
+```
+
+***
+
+### 1.6 Disparos e Impactos:
+El gráfico generado compara la cantidad de disparos realizados y los impactos exitosos para cada modelo de avión (A-10 y F-15). Utiliza un barplot apilado para mostrar visualmente la distribución de estos valores.
+
+```{r Disparos vs Impactos por avión}
+#Disparos vs Impactos por avión
+#Compara los disparos realizados y los impactos exitosos para cada modelo de avión.
+
+# Instalar y cargar librería ggplot2 (si no está instalada)
+if (!require(ggplot2)) install.packages("ggplot2", dependencies = TRUE)
+library(ggplot2)
+
+# Sumar disparos e impactos por avión
+library(dplyr)
+summary_data1 <- data1 %>%
+  group_by(avion) %>%
+  summarise(Disparos = sum(cantidad.disparos), 
+            Impactos = sum(cantidad.de.impactos))
+
+# Crear gráfico de barras apiladas
+barplot(t(as.matrix(summary_data1[,-1])), 
+        beside = FALSE, 
+        col = c("skyblue", "orange"), 
+        main = "Disparos vs Impactos por Avión", 
+        xlab = "Modelo de Avión", 
+        ylab = "Cantidad", 
+        legend.text = c("Disparos", "Impactos"),
+        names.arg = summary_data1$avion)
+
+```
+
+***
+
+### 1.7 Saltos vs. Daño Recibido:
+Scatter plot que muestra la relación entre la cantidad de saltos realizados y el daño recibido por los aviones, diferenciando los aviones A-10 y F-15 mediante diferentes colores.
+
+```{r Saltos vs. Danio Recibido}
+#Saltos vs. Daño Recibido
+#Muestra la relación entre los saltos realizados y el daño recibido por los aviones.
+
+# Scatter plot
+plot(data1$cantidad.de.saltos, data1$daño.recibido, 
+     main = "Relación entre Saltos y Daño Recibido", 
+     xlab = "Cantidad de Saltos", 
+     ylab = "Daño Recibido", 
+     col = ifelse(data1$avion == "A10", "blue", "red"), 
+     pch = 16)
+legend("topright", legend = c("A-10", "F-15"), col = c("blue", "red"), pch = 16)
+
+```
+
+***
+
+### 1.8 Saltos vs. Daño Recibido:
+Gráfico de pastel que muestra la proporción de aviones derribados frente a los que alcanzaron el objetivo.
+
+```{r Porcentaje de aviones derribados}
+#Porcentaje de aviones derribados
+#Representa la proporción de aviones derribados frente a los que alcanzaron el objetivo.
+
+# Calcular proporciones
+derribados <- table(data1$derribado)
+labels <- paste(names(derribados), 
+                round(100 * derribados / sum(derribados), 1), "%")
+
+# Gráfico de pastel
+pie(derribados, 
+    labels = labels, 
+    main = "Porcentaje de Aviones Derribados (Defensas estaticas)", 
+    col = c("green", "red"))
+
+
+```
+
+***
+
+### 1.9 Disparos por simulación:
+Histograma que muestra la distribución de la cantidad de disparos realizados en todas las simulaciones.
+
+```{r Disparos por simulación}
+#Disparos por simulación
+#Muestra la distribución de la cantidad de disparos realizados en todas las simulaciones.
+
+# Histograma
+hist(data1$cantidad.disparos, 
+     breaks = 20, 
+     main = "Distribución de Disparos por Simulación", 
+     xlab = "Cantidad de Disparos", 
+     col = "lightgreen", 
+     border = "darkgreen")
+
+```
+
+***
+
+### 1.10 Correlaciones entre variables:
+Genera un heatmap de correlación que muestra la relación entre varias variables clave como daño recibido, disparos, impactos y saltos.
+
+```{r Correlaciones entre variables}
+#Correlaciones entre variables
+#Visualiza las correlaciones entre las variables clave (daño, disparos, saltos, etc.).
+
+# Instalar y cargar librería corrplot (si no está instalada)
+if (!require(corrplot)) install.packages("corrplot", dependencies = TRUE)
+library(corrplot)
+
+# Calcular matriz de correlación
+library(corrplot)
+numerical_data <- data1 %>%
+  select(daño.recibido, cantidad.disparos, cantidad.de.impactos, cantidad.de.saltos)
+cor_matrix <- cor(numerical_data, use = "complete.obs")
+
+# Heatmap
+corrplot(cor_matrix, method = "color", addCoef.col = "black",
+         tl.col = "black", tl.cex = 0.8, 
+         main = "Matriz de Correlación entre Variables")
+
+```
+
+
+***
+
+## 2. Sistema de Defensas Móviles
+
+***
+
+### 2.1 Carga de los datos:
+Mediante el metodo read.csv se cargan los datos del estudio de simulación en la variable "data2"
+
+```{r Carga csv 2}
+# Cargar el archivo CSV
+data2 <- read.csv("simulacion_grilla_moviles.csv")
+
+# Verificar las primeras filas del archivo para confirmar la carga
+head(data2)
+
+```
+
+***
+
+### 2.2 Resumen Cantidades Totales:
+Se realiza la suma total para los registros del CSV, y de este modo, poder observar datos de utilizad como cantidad total de derribos, total de siparos, daño recibido, etc.
+
+```{r Resumen 2}
+
+# Inicializar contador para derribados
+total_derribados <- 0
+
+# Contar cuántos son verdaderos (True)
+for (i in 1:nrow(data2)) {
+  if (data2$derribado[i] == "True") {
+    total_derribados <- total_derribados + 1
+  }
+}
+
+# Calcular el total de disparos
+total_disparos <- sum(data2$cantidad.disparos)
+
+# Calcular el total de daño recibido
+total_dano_recibido <- sum(data2$daño.recibido)
+
+# Calcular la cantidad total de impactos
+total_impactos <- sum(data2$cantidad.de.impactos)
+
+# Calcular el total de iteraciones (registros)
+total_iteraciones <- nrow(data2)
+
+# Crear la tabla
+tabla_resumen2 <- data.frame(
+  "Total de Iteraciones" = total_iteraciones,
+  "Cantidad Total de Derribados" = total_derribados,
+  "Cantidad Total de Disparos" = total_disparos,
+  "Total de Daño Recibido" = total_dano_recibido,
+  "Total de Impactos" = total_impactos
+)
+
+# Ver la tabla
+print(tabla_resumen2)
+
+```
+
+***
+
+### 2.3 Histograma:
+Distribución de datos a través de "barras" que indican la frecuencia con la que ocurren los valores en rangos de clase específicos.
+
+```{r Histograma datos 2}
+# Instalar y cargar librería ggplot2 (si no está instalada)
+if (!require(ggplot2)) install.packages("ggplot2", dependencies = TRUE)
+library(ggplot2)
+
+# Histograma de la distribución del "daño recibido" con un rango específico
+ggplot(data2, aes(x = daño.recibido)) +
+  geom_histogram(binwidth = 100, fill = "blue", color = "black", alpha = 0.7) +
+  labs(title = "Distribución del Daño Recibido", x = "Daño Recibido", y = "Frecuencia") +
+  xlim(-100, 1500) +  # Ajusta el rango del eje X aquí
+  theme_minimal()
+
+# Histograma de la distribución de los "disparos" con un rango específico
+ggplot(data2, aes(x = cantidad.disparos)) +
+  geom_histogram(binwidth = 10, fill = "green", color = "black", alpha = 0.7) +
+  labs(title = "Distribución de la Cantidad de Disparos", x = "Cantidad de Disparos", y = "Frecuencia") +
+  xlim(-10, 100) +  # Ajusta el rango del eje X aquí
+  theme_minimal()
+
+# Histograma de la distribución de los "impactos" con un rango específico
+ggplot(data2, aes(x = cantidad.de.impactos)) +
+  geom_histogram(binwidth = 2, fill = "red", color = "black", alpha = 0.7) +
+  labs(title = "Distribución de la Cantidad de Impactos", x = "Cantidad de Impactos", y = "Frecuencia") +
+  xlim(-2, 20) +  # Ajusta el rango del eje X aquí
+  theme_minimal()
+
+# Histograma de la distribución de los "saltos" con un rango específico
+ggplot(data2, aes(x = cantidad.de.saltos)) +
+  geom_histogram(binwidth = 10, fill = "purple", color = "black", alpha = 0.7) +
+  labs(title = "Distribución de la Cantidad de Saltos", x = "Cantidad de Saltos", y = "Frecuencia") +
+  xlim(50, 200) +  # Ajusta el rango del eje X aquí
+  theme_minimal()
+
+```
+
+***
+
+### 2.4 Densidades:
+La función de densidad muestra la distribución de la variable en términos de la probabilidad de ocurrencia de los valores, creando una curva suave que representa la densidad de los datos.
+
+```{r Densidad datos 2}
+
+# Instalar y cargar librería ggplot2 (si no está instalada)
+if (!require(ggplot2)) install.packages("ggplot2", dependencies = TRUE)
+library(ggplot2)
+
+# Graficar la distribución del "daño recibido" con un rango específico
+ggplot(data2, aes(x = daño.recibido)) +
+  geom_density(fill = "blue", alpha = 0.4) +
+  labs(title = "Distribución del Daño Recibido", x = "Daño Recibido", y = "Densidad") +
+  xlim(0, 1500) +  # Ajusta el rango del eje X aquí
+  theme_minimal()
+
+# Graficar la distribución de los "disparos" con un rango específico
+ggplot(data2, aes(x = cantidad.disparos)) +
+  geom_density(fill = "green", alpha = 0.4) +
+  labs(title = "Distribución de la Cantidad de Disparos", x = "Cantidad de Disparos", y = "Densidad") +
+  xlim(0, 100) +  # Ajusta el rango del eje X aquí
+  theme_minimal()
+
+# Graficar la distribución de los "impactos" con un rango específico
+ggplot(data2, aes(x = cantidad.de.impactos)) +
+  geom_density(fill = "red", alpha = 0.4) +
+  labs(title = "Distribución de la Cantidad de Impactos", x = "Cantidad de Impactos", y = "Densidad") +
+  xlim(0, 20) +  # Ajusta el rango del eje X aquí
+  theme_minimal()
+
+# Graficar la distribución de los "saltos" con un rango específico
+ggplot(data2, aes(x = cantidad.de.saltos)) +
+  geom_density(fill = "purple", alpha = 0.4) +
+  labs(title = "Distribución de la Cantidad de Saltos", x = "Cantidad de Saltos", y = "Densidad") +
+  xlim(50, 200) +  # Ajusta el rango del eje X aquí
+  theme_minimal()
+
+```
+
+***
+
+### 2.5 Daños recibidos:
+Boxplot que muestra la distribución del daño recibido por cada modelo de avión (A-10 y F-15). Es útil para visualizar la dispersión, la ubicación central y la forma de la distribución de los datos en conjuntos separados. 
+
+```{r Danio por avion 2}
+#Daño recibido por avión
+#Este gráfico muestra la distribución del daño recibido para los modelos A-10 y F-15.
+# Boxplot
+boxplot(data2$daño.recibido ~ data2$avion, 
+        main = "Distribución del daño recibido por avión", 
+        xlab = "Modelo de Avión", 
+        ylab = "Daño Recibido", 
+        col = c("lightblue", "pink"),
+        notch = TRUE)
+```
+
+***
+
+### 2.6 Disparos e Impactos:
+El gráfico generado compara la cantidad de disparos realizados y los impactos exitosos para cada modelo de avión (A-10 y F-15). Utiliza un barplot apilado para mostrar visualmente la distribución de estos valores.
+
+```{r Disparos vs Impactos por avión 2}
+#Disparos vs Impactos por avión
+#Compara los disparos realizados y los impactos exitosos para cada modelo de avión.
+
+# Instalar y cargar librería ggplot2 (si no está instalada)
+if (!require(ggplot2)) install.packages("ggplot2", dependencies = TRUE)
+library(ggplot2)
+
+# Sumar disparos e impactos por avión
+library(dplyr)
+summary_data2 <- data2 %>%
+  group_by(avion) %>%
+  summarise(Disparos = sum(cantidad.disparos), 
+            Impactos = sum(cantidad.de.impactos))
+
+# Crear gráfico de barras apiladas
+barplot(t(as.matrix(summary_data2[,-1])), 
+        beside = FALSE, 
+        col = c("skyblue", "orange"), 
+        main = "Disparos vs Impactos por Avión", 
+        xlab = "Modelo de Avión", 
+        ylab = "Cantidad", 
+        legend.text = c("Disparos", "Impactos"),
+        names.arg = summary_data2$avion)
+
+```
+
+***
+
+### 2.7 Saltos vs. Daño Recibido:
+Scatter plot que muestra la relación entre la cantidad de saltos realizados y el daño recibido por los aviones, diferenciando los aviones A-10 y F-15 mediante diferentes colores.
+
+```{r Saltos vs. Danio Recibido 2}
+#Saltos vs. Daño Recibido
+#Muestra la relación entre los saltos realizados y el daño recibido por los aviones.
+
+# Scatter plot
+plot(data2$cantidad.de.saltos, data2$daño.recibido, 
+     main = "Relación entre Saltos y Daño Recibido", 
+     xlab = "Cantidad de Saltos", 
+     ylab = "Daño Recibido", 
+     col = ifelse(data2$avion == "A10", "blue", "red"), 
+     pch = 16)
+legend("topright", legend = c("A-10", "F-15"), col = c("blue", "red"), pch = 16)
+
+```
+
+***
+
+### 2.8 Saltos vs. Daño Recibido:
+Gráfico de pastel que muestra la proporción de aviones derribados frente a los que alcanzaron el objetivo.
+
+```{r Porcentaje de aviones derribados 2}
+#Porcentaje de aviones derribados
+#Representa la proporción de aviones derribados frente a los que alcanzaron el objetivo.
+
+# Calcular proporciones
+derribados <- table(data2$derribado)
+labels <- paste(names(derribados), 
+                round(100 * derribados / sum(derribados), 1), "%")
+
+# Gráfico de pastel
+pie(derribados, 
+    labels = labels, 
+    main = "Porcentaje de Aviones Derribados (Defensas moviles)", 
+    col = c("green", "red"))
+
+
+```
+
+***
+
+### 2.9 Disparos por simulación:
+Histograma que muestra la distribución de la cantidad de disparos realizados en todas las simulaciones.
+
+```{r Disparos por simulación 2}
+#Disparos por simulación
+#Muestra la distribución de la cantidad de disparos realizados en todas las simulaciones.
+
+# Histograma
+hist(data2$cantidad.disparos, 
+     breaks = 20, 
+     main = "Distribución de Disparos por Simulación", 
+     xlab = "Cantidad de Disparos", 
+     col = "lightgreen", 
+     border = "darkgreen")
+
+```
+
+***
+
+### 2.10 Correlaciones entre variables:
+Genera un heatmap de correlación que muestra la relación entre varias variables clave como daño recibido, disparos, impactos y saltos.
+
+```{r Correlaciones entre variables 2}
+#Correlaciones entre variables
+#Visualiza las correlaciones entre las variables clave (daño, disparos, saltos, etc.).
+
+# Instalar y cargar librería corrplot (si no está instalada)
+if (!require(corrplot)) install.packages("corrplot", dependencies = TRUE)
+library(corrplot)
+
+# Calcular matriz de correlación
+library(corrplot)
+numerical_data <- data2 %>%
+  select(daño.recibido, cantidad.disparos, cantidad.de.impactos, cantidad.de.saltos)
+cor_matrix <- cor(numerical_data, use = "complete.obs")
+
+# Heatmap
+corrplot(cor_matrix, method = "color", addCoef.col = "black",
+         tl.col = "black", tl.cex = 0.8, 
+         main = "Matriz de Correlación entre Variables")
+
+```
+
+
+
+
+
+
+
